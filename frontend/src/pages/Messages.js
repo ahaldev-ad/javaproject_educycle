@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AnimatedPage from '../components/AnimatedPage';
 import MessageBox from '../components/MessageBox';
 import { requestService } from '../services/requestService';
-import { messageService } from '../services/miscServices';
+import { firebaseChatService } from '../services/firebaseChatService';
 import { useNotification } from '../context/NotificationContext';
 
 const Messages = () => {
@@ -55,45 +55,51 @@ const Messages = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Real-time chat listener via Firebase Realtime Database
   useEffect(() => {
-    if (!activeMatch) return;
-    const fetchChat = async () => {
-      try {
-        const data = await messageService.getChatHistory(activeMatch.requestId);
-        const userStr = localStorage.getItem('user');
-        const currentUser = userStr ? JSON.parse(userStr) : null;
-        const currentUserId = currentUser?.id || currentUser?.userId;
+    if (!activeMatch?.requestId) {
+      setMessages([]);
+      return;
+    }
 
-        const mappedMessages = (data || []).map(m => ({
-          ...m,
-          isMine: m.sender?.userId === currentUserId || m.senderId === currentUserId
-        }));
-        setMessages(mappedMessages);
-      } catch (err) {
-        console.error("Failed to load chat history", err);
+    const userStr = localStorage.getItem('user');
+    const currentUser = userStr ? JSON.parse(userStr) : null;
+    const currentUserId = currentUser?.id || currentUser?.userId;
+    const currentUserEmail = currentUser?.email;
+
+    const unsubscribe = firebaseChatService.subscribeToChat(
+      activeMatch.requestId,
+      currentUserId,
+      currentUserEmail,
+      (liveMessages) => {
+        setMessages(liveMessages);
+      },
+      (err) => {
+        console.error("Firebase Realtime Database chat error:", err);
       }
+    );
+
+    return () => {
+      unsubscribe();
     };
-    fetchChat();
   }, [activeMatch]);
 
   const handleSendMessage = async (text) => {
-    if (!activeMatch) return;
+    if (!activeMatch?.requestId) return;
     try {
       const userStr = localStorage.getItem('user');
       const currentUser = userStr ? JSON.parse(userStr) : null;
       const currentUserId = currentUser?.id || currentUser?.userId || 1;
 
-      const newMsg = {
-        requestId: activeMatch.requestId,
+      await firebaseChatService.sendMessage(activeMatch.requestId, {
         senderId: currentUserId,
-        type: activeMatch.type || 'resource',
-        messageText: text,
-        timestamp: new Date().toISOString(),
-        isMine: true
-      };
-      await messageService.sendMessage(newMsg);
-      setMessages((prev) => [...prev, newMsg]);
+        senderName: currentUser?.name || currentUser?.firstName || 'Student Peer',
+        senderEmail: currentUser?.email || '',
+        messageText: text
+      });
+      // The real-time onValue listener will automatically update the UI instantly
     } catch (err) {
+      console.error("Failed to send message via Firebase RTDB:", err);
       showError("Failed to send message.");
     }
   };

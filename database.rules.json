@@ -1,0 +1,32 @@
+{
+  "rules": {
+    "chats": {
+      "$requestId": {
+        // Allow logged-in users to read and send messages in accepted request match chats
+        ".read": "auth != null",
+        ".write": "auth != null",
+        "messages": {
+          "$messageId": {
+            // Validate required message structure
+            ".validate": "newData.hasChildren(['senderId', 'messageText', 'timestamp'])",
+            "messageText": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 2000"
+            },
+            "timestamp": {
+              ".validate": "newData.isNumber() || newData.isString()"
+            },
+            "senderId": {
+              ".validate": "newData.isNumber() || newData.isString()"
+            },
+            "senderName": {
+              ".validate": "!newData.exists() || newData.isString()"
+            },
+            "senderEmail": {
+              ".validate": "!newData.exists() || newData.isString()"
+            }
+          }
+        }
+      }
+    }
+  }
+}
