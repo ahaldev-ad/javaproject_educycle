@@ -257,7 +257,7 @@ const Home = () => {
               <p ref={heroTextRef} className="lead text-muted mb-4 pe-lg-4" style={{ lineHeight: '1.7' }}>
                 EduCycle connects students within your institution to donate, lend, or swap academic materials and offer peer-to-peer tutoring seamlessly.
               </p>
-              <div ref={heroBtnsRef} className="d-flex flex-wrap gap-3">
+              <div ref={heroBtnsRef} className="d-flex flex-wrap gap-3 hero-btns-wrap">
                 <Link to="/resources" className="btn btn-primary btn-lg fw-bold px-4 py-3 shadow-lg d-flex align-items-center gap-2">
                   <span>Browse Resources</span>
                   <i className="bi bi-arrow-right fs-5"></i>
@@ -284,14 +284,14 @@ const Home = () => {
 
       {/* Glass Stats Counter Section with ScrollTrigger */}
       <section className="container mb-5">
-        <div ref={statsSectionRef} className="row g-4 text-center">
+        <div ref={statsSectionRef} className="row g-3 g-md-4 text-center">
           <div className="col-md-3 col-6">
-            <div className="glass-card p-4 h-100">
+            <div className="glass-card p-3 p-md-4 h-100">
               <div
                 className="d-inline-flex align-items-center justify-content-center text-primary rounded-circle mb-2"
-                style={{ width: '48px', height: '48px', background: 'var(--primary-light)' }}
+                style={{ width: '44px', height: '44px', background: 'var(--primary-light)' }}
               >
-                <i className="bi bi-box-seam-fill fs-4"></i>
+                <i className="bi bi-box-seam-fill fs-5"></i>
               </div>
               <h3 className="fw-extrabold text-dark mb-1" style={{ letterSpacing: '-0.02em' }}>
                 {liveStats.resources !== null ? liveStats.resources : (resources.length || 0)}
@@ -300,12 +300,12 @@ const Home = () => {
             </div>
           </div>
           <div className="col-md-3 col-6">
-            <div className="glass-card p-4 h-100">
+            <div className="glass-card p-3 p-md-4 h-100">
               <div
                 className="d-inline-flex align-items-center justify-content-center text-primary rounded-circle mb-2"
-                style={{ width: '48px', height: '48px', background: 'var(--primary-light)' }}
+                style={{ width: '44px', height: '44px', background: 'var(--primary-light)' }}
               >
-                <i className="bi bi-people-fill fs-4"></i>
+                <i className="bi bi-people-fill fs-5"></i>
               </div>
               <h3 className="fw-extrabold text-dark mb-1" style={{ letterSpacing: '-0.02em' }}>
                 {liveStats.skills !== null ? liveStats.skills : (skills.length || 0)}
@@ -314,12 +314,12 @@ const Home = () => {
             </div>
           </div>
           <div className="col-md-3 col-6">
-            <div className="glass-card p-4 h-100">
+            <div className="glass-card p-3 p-md-4 h-100">
               <div
                 className="d-inline-flex align-items-center justify-content-center text-primary rounded-circle mb-2"
-                style={{ width: '48px', height: '48px', background: 'var(--primary-light)' }}
+                style={{ width: '44px', height: '44px', background: 'var(--primary-light)' }}
               >
-                <i className="bi bi-mortarboard-fill fs-4"></i>
+                <i className="bi bi-mortarboard-fill fs-5"></i>
               </div>
               <h3 className="fw-extrabold text-dark mb-1" style={{ letterSpacing: '-0.02em' }}>
                 {liveStats.students !== null ? liveStats.students : 0}
@@ -328,12 +328,12 @@ const Home = () => {
             </div>
           </div>
           <div className="col-md-3 col-6">
-            <div className="glass-card p-4 h-100">
+            <div className="glass-card p-3 p-md-4 h-100">
               <div
                 className="d-inline-flex align-items-center justify-content-center text-primary rounded-circle mb-2"
-                style={{ width: '48px', height: '48px', background: 'var(--primary-light)' }}
+                style={{ width: '44px', height: '44px', background: 'var(--primary-light)' }}
               >
-                <i className="bi bi-tree-fill fs-4"></i>
+                <i className="bi bi-tree-fill fs-5"></i>
               </div>
               <h3 className="fw-extrabold text-dark mb-1" style={{ letterSpacing: '-0.02em' }}>100%</h3>
               <p className="text-muted small mb-0 fw-semibold">Sustainable Exchange</p>
@@ -344,7 +344,7 @@ const Home = () => {
 
       {/* Trending Resources with ScrollTrigger */}
       <section className="container mb-5">
-        <div ref={resourcesHeaderRef} className="d-flex justify-content-between align-items-end mb-4">
+        <div ref={resourcesHeaderRef} className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-end gap-3 mb-4">
           <div>
             <span className="badge-pill-accent mb-2">
               <i className="bi bi-award-fill me-1"></i> Academic Marketplace
@@ -361,7 +361,7 @@ const Home = () => {
             <div className="spinner-border text-primary" role="status"></div>
           </div>
         ) : (
-          <div ref={resourcesGridRef} className="row g-4">
+          <div ref={resourcesGridRef} className="row g-3 g-md-4">
             {resources.length > 0 ? (
               resources.slice(0, 4).map((item) => (
                 <div className="col-lg-3 col-md-6" key={item.id || item.resourceId}>
@@ -377,7 +377,7 @@ const Home = () => {
 
       {/* Featured Skills with ScrollTrigger */}
       <section className="container mb-5">
-        <div ref={skillsHeaderRef} className="d-flex justify-content-between align-items-end mb-4">
+        <div ref={skillsHeaderRef} className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-end gap-3 mb-4">
           <div>
             <span className="badge-pill-accent mb-2">
               <i className="bi bi-lightning-charge-fill me-1"></i> Peer Learning

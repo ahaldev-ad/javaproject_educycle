@@ -430,9 +430,9 @@ const AdminPanel = () => {
         </div>
       </div>
 
-      {/* Admin Navigation Pills */}
-      <div className="d-flex flex-wrap gap-2 border-bottom border-subtle pb-3 mb-4 justify-content-between align-items-center">
-        <ul className="nav nav-pills gap-2 mb-0">
+      {/* Admin Navigation Pills (Smooth swipe on mobile phones) */}
+      <div className="d-flex flex-column flex-md-row gap-2 border-bottom border-subtle pb-3 mb-4 justify-content-between align-items-stretch align-items-md-center">
+        <ul className="nav nav-pills gap-2 mb-0 scrollable-pills-bar">
           <li className="nav-item">
             <button
               className={`nav-link fw-bold px-3 py-2 rounded-3 ${activeTab === 'overview' ? 'active' : ''}`}
@@ -474,7 +474,7 @@ const AdminPanel = () => {
         </ul>
 
         {(activeTab === 'resources' || activeTab === 'skills') && (
-          <div className="input-group" style={{ maxWidth: '280px' }}>
+          <div className="input-group mt-2 mt-md-0 w-100" style={{ maxWidth: '300px' }}>
             <span className="input-group-text bg-white border-end-0"><i className="bi bi-search text-muted"></i></span>
             <input
               type="text"
@@ -660,7 +660,7 @@ const AdminPanel = () => {
           {activeTab === 'resources' && (
             <div>
               {/* Filter Pills */}
-              <div className="d-flex flex-wrap gap-2 mb-3">
+              <div className="d-flex flex-wrap gap-2 mb-3 scrollable-pills-bar">
                 <button
                   className={`btn btn-sm ${resourceFilter === 'ALL' ? 'btn-primary' : 'btn-outline-secondary'} fw-bold px-3`}
                   onClick={() => setResourceFilter('ALL')}
@@ -687,8 +687,12 @@ const AdminPanel = () => {
                 </button>
               </div>
 
+              <div className="admin-table-hint">
+                <i className="bi bi-arrows-expand me-1"></i> Swipe table horizontally to review full details & actions
+              </div>
+
               {/* Table */}
-              <div className="glass-card overflow-hidden p-0 shadow-sm">
+              <div className="glass-card overflow-hidden p-0 shadow-sm admin-table-container">
                 <div className="table-responsive">
                   <table className="table table-hover align-middle mb-0">
                     <thead className="table-light">
@@ -798,7 +802,7 @@ const AdminPanel = () => {
           {activeTab === 'skills' && (
             <div>
               {/* Filter Pills */}
-              <div className="d-flex flex-wrap gap-2 mb-3">
+              <div className="d-flex flex-wrap gap-2 mb-3 scrollable-pills-bar">
                 <button
                   className={`btn btn-sm ${skillFilter === 'ALL' ? 'btn-primary' : 'btn-outline-secondary'} fw-bold px-3`}
                   onClick={() => setSkillFilter('ALL')}
@@ -825,8 +829,12 @@ const AdminPanel = () => {
                 </button>
               </div>
 
+              <div className="admin-table-hint">
+                <i className="bi bi-arrows-expand me-1"></i> Swipe table horizontally to review full details & actions
+              </div>
+
               {/* Table */}
-              <div className="glass-card overflow-hidden p-0 shadow-sm">
+              <div className="glass-card overflow-hidden p-0 shadow-sm admin-table-container">
                 <div className="table-responsive">
                   <table className="table table-hover align-middle mb-0">
                     <thead className="table-light">
@@ -924,7 +932,11 @@ const AdminPanel = () => {
 
           {/* TAB 4: USER MANAGEMENT */}
           {activeTab === 'users' && (
-            <div className="glass-card overflow-hidden p-0 shadow-sm">
+            <div>
+              <div className="admin-table-hint">
+                <i className="bi bi-arrows-expand me-1"></i> Swipe table horizontally to review user details & moderation
+              </div>
+              <div className="glass-card overflow-hidden p-0 shadow-sm admin-table-container">
               <div className="table-responsive">
                 <table className="table table-hover align-middle mb-0">
                   <thead className="table-light">
@@ -1022,9 +1034,10 @@ const AdminPanel = () => {
                 </table>
               </div>
             </div>
-          )}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
+    )}
 
       {/* Temporary Suspension Modal */}
       {suspendModalOpen && selectedUserForSuspend && (

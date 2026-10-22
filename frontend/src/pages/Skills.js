@@ -174,7 +174,7 @@ const Skills = () => {
           <p className="text-muted mb-0">Learn programming, mathematics, foreign languages, and design from fellow students</p>
         </div>
         {isAuthenticated && (
-          <button className="btn btn-primary fw-bold px-4 py-2.5 d-flex align-items-center gap-2" onClick={() => setShowPostModal(true)}>
+          <button className="btn btn-primary fw-bold px-4 py-2.5 d-flex align-items-center justify-content-center gap-2 w-100 w-md-auto" onClick={() => setShowPostModal(true)}>
             <i className="bi bi-plus-circle-fill fs-5"></i>
             <span>Offer a Skill</span>
           </button>
@@ -271,7 +271,7 @@ const Skills = () => {
           <div className="spinner-border text-primary" role="status"></div>
         </div>
       ) : (
-        <div ref={gridRef} className="row g-4">
+        <div ref={gridRef} className="row g-3 g-md-4">
           {skills.length > 0 ? (
             skills.map((skill) => (
               <div className="col-lg-3 col-md-6" key={skill.id || skill.skillId}>
@@ -290,7 +290,14 @@ const Skills = () => {
 
       {/* Modal to Post New Skill */}
       {showPostModal && (
-        <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(3, 27, 56, 0.55)', backdropFilter: 'blur(8px)' }}>
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          style={{ backgroundColor: 'rgba(3, 27, 56, 0.55)', backdropFilter: 'blur(8px)' }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowPostModal(false);
+          }}
+        >
           <div className="modal-dialog modal-lg modal-dialog-centered">
             <div className="modal-content glass-card overflow-hidden p-0 border-0">
               <div className="modal-header text-white p-4" style={{ background: 'var(--primary-gradient)' }}>

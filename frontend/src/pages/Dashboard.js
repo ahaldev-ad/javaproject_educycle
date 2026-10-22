@@ -65,11 +65,11 @@ const Dashboard = () => {
   return (
     <AnimatedPage className="container py-5">
       {/* Header Banner */}
-      <div className="glass-card p-4 p-md-5 mb-5 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
-        <div className="d-flex align-items-center gap-4">
+      <div className="glass-card p-3 p-md-5 mb-4 mb-md-5 d-flex flex-column flex-md-row align-items-stretch align-items-md-center justify-content-between gap-4">
+        <div className="d-flex align-items-center gap-3 gap-md-4">
           <div 
-            className="avatar-circle text-white display-6 fw-bold rounded-circle d-flex align-items-center justify-content-center shadow"
-            style={{ width: '72px', height: '72px', background: 'var(--primary-gradient)' }}
+            className="avatar-circle text-white display-6 fw-bold rounded-circle d-flex align-items-center justify-content-center shadow flex-shrink-0"
+            style={{ width: '64px', height: '64px', background: 'var(--primary-gradient)' }}
           >
             {user?.firstName ? user.firstName.charAt(0).toUpperCase() : 'S'}
           </div>
@@ -86,24 +86,24 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="d-flex gap-3">
-          <div className="text-center px-4 py-3 rounded-4 shadow-sm" style={{ background: 'var(--primary-light)', border: '1px solid rgba(5, 79, 163, 0.12)' }}>
+        <div className="dashboard-header-stats d-flex gap-2 gap-md-3">
+          <div className="stat-item text-center px-3 px-md-4 py-2.5 py-md-3 rounded-4 shadow-sm" style={{ background: 'var(--primary-light)', border: '1px solid rgba(5, 79, 163, 0.12)' }}>
             <span className="d-block fw-extrabold fs-4 text-primary">{myResources.length}</span>
             <small className="text-primary fw-semibold">Resources</small>
           </div>
-          <div className="text-center px-4 py-3 rounded-4 shadow-sm" style={{ background: 'var(--primary-light)', border: '1px solid rgba(5, 79, 163, 0.12)' }}>
+          <div className="stat-item text-center px-3 px-md-4 py-2.5 py-md-3 rounded-4 shadow-sm" style={{ background: 'var(--primary-light)', border: '1px solid rgba(5, 79, 163, 0.12)' }}>
             <span className="d-block fw-extrabold fs-4 text-primary">{mySkills.length}</span>
             <small className="text-primary fw-semibold">Skills</small>
           </div>
-          <div className="text-center px-4 py-3 rounded-4 shadow-sm" style={{ background: 'var(--primary-light)', border: '1px solid rgba(5, 79, 163, 0.12)' }}>
+          <div className="stat-item text-center px-3 px-md-4 py-2.5 py-md-3 rounded-4 shadow-sm" style={{ background: 'var(--primary-light)', border: '1px solid rgba(5, 79, 163, 0.12)' }}>
             <span className="d-block fw-extrabold fs-4 text-primary">{incomingRequests.length}</span>
             <small className="text-primary fw-semibold">Requests</small>
           </div>
         </div>
       </div>
 
-      {/* Nav Tabs */}
-      <ul className="nav nav-pills mb-4 gap-2 border-bottom border-subtle pb-3">
+      {/* Nav Tabs (Smooth swipe on mobile phones) */}
+      <ul className="nav nav-pills mb-4 gap-2 border-bottom border-subtle pb-3 scrollable-pills-bar">
         <li className="nav-item">
           <button className={`nav-link fw-bold ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>
             <i className="bi bi-speedometer2 me-2"></i>Overview
@@ -121,7 +121,7 @@ const Dashboard = () => {
         </li>
         <li className="nav-item">
           <button className={`nav-link fw-bold ${activeTab === 'requests' ? 'active' : ''}`} onClick={() => setActiveTab('requests')}>
-            <i className="bi bi-inbox me-2"></i>Requests Center ({incomingRequests.length + outgoingRequests.length})
+            <i className="bi bi-inbox me-2"></i>Requests ({incomingRequests.length + outgoingRequests.length})
           </button>
         </li>
       </ul>
@@ -195,7 +195,7 @@ const Dashboard = () => {
 
           {/* Resources Tab */}
           {activeTab === 'resources' && (
-            <div className="row g-4">
+            <div className="row g-3 g-md-4">
               {myResources.length > 0 ? (
                 myResources.map((item) => (
                   <div className="col-lg-3 col-md-6" key={item.id || item.resourceId}>
@@ -212,7 +212,7 @@ const Dashboard = () => {
 
           {/* Skills Tab */}
           {activeTab === 'skills' && (
-            <div className="row g-4">
+            <div className="row g-3 g-md-4">
               {mySkills.length > 0 ? (
                 mySkills.map((skill) => (
                   <div className="col-lg-3 col-md-6" key={skill.id || skill.skillId}>

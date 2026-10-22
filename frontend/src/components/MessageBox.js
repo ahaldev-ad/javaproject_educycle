@@ -29,28 +29,29 @@ const MessageBox = ({ activeMatch, messages, onSendMessage, onBack }) => {
 
   return (
     <div className="glass-card h-100 d-flex flex-column overflow-hidden border-0">
-      <div className="p-4 bg-white bg-opacity-60 border-bottom border-subtle d-flex align-items-center justify-content-between">
-        <div className="d-flex align-items-center gap-3">
+      <div className="p-3 p-md-4 bg-white bg-opacity-60 border-bottom border-subtle d-flex align-items-center justify-content-between gap-2">
+        <div className="d-flex align-items-center gap-2.5 overflow-hidden">
           {onBack && (
-            <button className="btn btn-sm btn-light border-0 d-md-none me-1" onClick={onBack}>
+            <button className="btn btn-sm btn-light border-0 d-md-none me-1 flex-shrink-0" onClick={onBack} aria-label="Back to contacts">
               <i className="bi bi-chevron-left fs-5"></i>
             </button>
           )}
           <div 
-            className="avatar-circle text-white fw-bold d-flex align-items-center justify-content-center shadow-sm"
-            style={{ width: '42px', height: '42px', borderRadius: '50%', background: 'var(--primary-gradient)' }}
+            className="avatar-circle text-white fw-bold d-flex align-items-center justify-content-center shadow-sm flex-shrink-0"
+            style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary-gradient)' }}
           >
             {activeMatch.peerName ? activeMatch.peerName.charAt(0).toUpperCase() : 'P'}
           </div>
-          <div>
-            <h6 className="fw-extrabold text-dark mb-0">{activeMatch.peerName || 'Campus Peer'}</h6>
-            <small className="text-muted">{activeMatch.title || activeMatch.skillName}</small>
+          <div className="overflow-hidden">
+            <h6 className="fw-extrabold text-dark mb-0 text-truncate">{activeMatch.peerName || 'Campus Peer'}</h6>
+            <small className="text-muted text-truncate d-block">{activeMatch.title || activeMatch.skillName}</small>
           </div>
         </div>
 
         {activeMatch.contactRevealed && (
-          <div className="badge-pill-accent">
-            <i className="bi bi-telephone-fill me-1"></i> Contact: {activeMatch.peerPhone || activeMatch.peerEmail}
+          <div className="badge-pill-accent chat-contact-pill flex-shrink-0" title={`Contact: ${activeMatch.peerPhone || activeMatch.peerEmail}`}>
+            <i className="bi bi-telephone-fill me-1"></i>
+            <span className="d-none d-sm-inline">Contact: </span>{activeMatch.peerPhone || activeMatch.peerEmail}
           </div>
         )}
       </div>

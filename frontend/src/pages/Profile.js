@@ -168,7 +168,7 @@ const Profile = () => {
                 </div>
               </div>
 
-              <button type="submit" className="btn btn-primary fw-bold px-4 py-2.5 mt-4 shadow" disabled={loading}>
+              <button type="submit" className="btn btn-primary fw-bold px-4 py-2.5 mt-4 shadow w-100 w-md-auto" disabled={loading}>
                 {loading ? 'Saving Changes...' : 'Save Profile Changes'}
               </button>
             </form>

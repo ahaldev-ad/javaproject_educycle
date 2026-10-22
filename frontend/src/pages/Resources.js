@@ -176,7 +176,7 @@ const Resources = () => {
           <p className="text-muted mb-0">Browse textbooks, lab equipment, notes, and components posted by campus peers</p>
         </div>
         {isAuthenticated && (
-          <button className="btn btn-primary fw-bold px-4 py-2.5 d-flex align-items-center gap-2" onClick={() => setShowPostModal(true)}>
+          <button className="btn btn-primary fw-bold px-4 py-2.5 d-flex align-items-center justify-content-center gap-2 w-100 w-md-auto" onClick={() => setShowPostModal(true)}>
             <i className="bi bi-plus-circle-fill fs-5"></i>
             <span>Post a Resource</span>
           </button>
@@ -273,7 +273,7 @@ const Resources = () => {
           <div className="spinner-border text-primary" role="status"></div>
         </div>
       ) : (
-        <div ref={gridRef} className="row g-4">
+        <div ref={gridRef} className="row g-3 g-md-4">
           {resources.length > 0 ? (
             resources.map((item) => (
               <div className="col-lg-3 col-md-6" key={item.id || item.resourceId}>
@@ -292,7 +292,14 @@ const Resources = () => {
 
       {/* Modal to Post New Resource */}
       {showPostModal && (
-        <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(3, 27, 56, 0.55)', backdropFilter: 'blur(8px)' }}>
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          style={{ backgroundColor: 'rgba(3, 27, 56, 0.55)', backdropFilter: 'blur(8px)' }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowPostModal(false);
+          }}
+        >
           <div className="modal-dialog modal-lg modal-dialog-centered">
             <div className="modal-content glass-card overflow-hidden p-0 border-0">
               <div className="modal-header text-white p-4" style={{ background: 'var(--primary-gradient)' }}>

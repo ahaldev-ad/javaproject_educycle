@@ -23,12 +23,12 @@ const Footer = () => {
 
           <div className="col-lg-3 col-md-6">
             <h6 className="fw-bold text-white mb-3" style={{ letterSpacing: '0.03em' }}>Quick Navigation</h6>
-            <ul className="list-unstyled small d-flex flex-column gap-2">
-              <li><Link to="/" className="text-white-50 text-decoration-none hover-white">Home</Link></li>
-              <li><Link to="/resources" className="text-white-50 text-decoration-none hover-white">Academic Resources</Link></li>
-              <li><Link to="/skills" className="text-white-50 text-decoration-none hover-white">Peer Skills</Link></li>
-              <li><Link to="/dashboard" className="text-white-50 text-decoration-none hover-white">Dashboard</Link></li>
-              <li><Link to="/admin" className="text-white-50 text-decoration-none hover-white"><i className="bi bi-shield-lock me-1"></i>Admin Portal</Link></li>
+            <ul className="list-unstyled small d-flex flex-column gap-1">
+              <li><Link to="/" className="text-white-50 text-decoration-none hover-white d-inline-block py-1">Home</Link></li>
+              <li><Link to="/resources" className="text-white-50 text-decoration-none hover-white d-inline-block py-1">Academic Resources</Link></li>
+              <li><Link to="/skills" className="text-white-50 text-decoration-none hover-white d-inline-block py-1">Peer Skills</Link></li>
+              <li><Link to="/dashboard" className="text-white-50 text-decoration-none hover-white d-inline-block py-1">Dashboard</Link></li>
+              <li><Link to="/admin" className="text-white-50 text-decoration-none hover-white d-inline-block py-1"><i className="bi bi-shield-lock me-1"></i>Admin Portal</Link></li>
             </ul>
           </div>
 

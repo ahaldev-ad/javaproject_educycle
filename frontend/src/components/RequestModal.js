@@ -45,7 +45,15 @@ const RequestModal = ({ show, onClose, item, type, onSubmit }) => {
   };
 
   return (
-    <div ref={backdropRef} className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(3, 27, 56, 0.55)', backdropFilter: 'blur(8px)' }}>
+    <div
+      ref={backdropRef}
+      className="modal show d-block"
+      tabIndex="-1"
+      style={{ backgroundColor: 'rgba(3, 27, 56, 0.55)', backdropFilter: 'blur(8px)' }}
+      onClick={(e) => {
+        if (e.target === backdropRef.current) onClose();
+      }}
+    >
       <div className="modal-dialog modal-dialog-centered">
         <div ref={modalContentRef} className="modal-content glass-card overflow-hidden p-0 border-0">
           <div className="modal-header text-white p-4" style={{ background: 'var(--primary-gradient)' }}>

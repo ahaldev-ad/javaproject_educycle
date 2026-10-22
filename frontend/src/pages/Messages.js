@@ -107,7 +107,7 @@ const Messages = () => {
   return (
     <AnimatedPage className="container py-5">
       <h2 className="fw-extrabold text-dark mb-4 d-none d-md-block" style={{ letterSpacing: '-0.02em' }}>In-App Campus Messaging</h2>
-      <div className="row g-0 g-md-4" style={{ height: 'calc(100vh - 180px)', minHeight: '520px' }}>
+      <div className="row g-0 g-md-4 messages-page-wrapper" style={{ height: 'calc(100vh - 180px)', minHeight: '480px' }}>
         {/* Contacts Sidebar */}
         <div className={`col-md-4 h-100 ${activeMatch ? 'd-none d-md-block' : 'd-block'}`}>
           <div className="glass-card h-100 p-0 overflow-hidden d-flex flex-column">

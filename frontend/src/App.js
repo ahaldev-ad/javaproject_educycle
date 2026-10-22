@@ -10,6 +10,7 @@ import { NotificationProvider } from './context/NotificationContext';
 import FlowingBackground from './components/FlowingBackground';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import MobileBottomNav from './components/MobileBottomNav';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -34,7 +35,7 @@ function App() {
     <AuthProvider>
       <NotificationProvider>
         <Router>
-          <div className="d-flex flex-column min-vh-100 position-relative">
+          <div className="d-flex flex-column min-vh-100 position-relative app-body-wrapper pb-mobile-nav">
             <FlowingBackground />
             <Navbar />
             <main className="flex-grow-1">
@@ -92,6 +93,7 @@ function App() {
               </Routes>
             </main>
             <Footer />
+            <MobileBottomNav />
           </div>
         </Router>
       </NotificationProvider>
