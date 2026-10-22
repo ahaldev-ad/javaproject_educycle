@@ -15,6 +15,7 @@ const Skills = () => {
   const { user, isAuthenticated } = useAuth();
   const { showSuccess, showError } = useNotification();
 
+  const [allSkills, setAllSkills] = useState([]);
   const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -43,7 +44,7 @@ const Skills = () => {
   const fetchSkills = async () => {
     setLoading(true);
     try {
-      const data = await skillService.getAll({ category, level, search });
+      const data = await skillService.getAll();
       const raw = data.content || data || [];
       // Strictly show only approved skills in public directory
       const approvedOnly = raw.filter(item => {
@@ -52,7 +53,7 @@ const Skills = () => {
         }
         return item.approved !== false;
       });
-      setSkills(approvedOnly);
+      setAllSkills(approvedOnly);
     } catch (err) {
       showError("Failed to fetch skill offerings.");
     } finally {
@@ -63,7 +64,37 @@ const Skills = () => {
   useEffect(() => {
     fetchSkills();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, level]);
+  }, []);
+
+  // Live filter skills whenever allSkills, category, level, or search changes
+  useEffect(() => {
+    let filtered = [...allSkills];
+
+    if (category) {
+      filtered = filtered.filter(skill =>
+        (skill.category || '').toLowerCase() === category.toLowerCase()
+      );
+    }
+
+    if (level) {
+      filtered = filtered.filter(skill =>
+        (skill.level || '').toLowerCase() === level.toLowerCase()
+      );
+    }
+
+    if (search && search.trim() !== '') {
+      const query = search.trim().toLowerCase();
+      filtered = filtered.filter(skill => {
+        const name = (skill.skillName || '').toLowerCase();
+        const desc = (skill.description || '').toLowerCase();
+        const cat = (skill.category || '').toLowerCase();
+        const tutor = `${skill.user?.firstName || ''} ${skill.user?.lastName || ''}`.toLowerCase();
+        return name.includes(query) || desc.includes(query) || cat.includes(query) || tutor.includes(query);
+      });
+    }
+
+    setSkills(filtered);
+  }, [allSkills, category, level, search]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -186,10 +217,24 @@ const Skills = () => {
               <option value="Advanced">Advanced</option>
             </select>
           </div>
-          <div className="col-md-1">
-            <button type="submit" className="btn btn-primary w-100 fw-bold">
+          <div className="col-md-1 d-flex gap-1">
+            <button type="submit" className="btn btn-primary w-100 fw-bold" title="Search">
               <i className="bi bi-search"></i>
             </button>
+            {(search || category || level) && (
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                title="Reset Filters"
+                onClick={() => {
+                  setSearch('');
+                  setCategory('');
+                  setLevel('');
+                }}
+              >
+                <i className="bi bi-x-lg"></i>
+              </button>
+            )}
           </div>
         </form>
       </div>

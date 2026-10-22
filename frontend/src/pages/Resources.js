@@ -15,6 +15,7 @@ const Resources = () => {
   const { user, isAuthenticated } = useAuth();
   const { showSuccess, showError } = useNotification();
 
+  const [allResources, setAllResources] = useState([]);
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -44,7 +45,7 @@ const Resources = () => {
   const fetchResources = async () => {
     setLoading(true);
     try {
-      const data = await resourceService.getAll({ category, exchangeType, search });
+      const data = await resourceService.getAll();
       const raw = data.content || data || [];
       // Strictly show only approved resources in public exchange
       const approvedOnly = raw.filter(item => {
@@ -53,7 +54,7 @@ const Resources = () => {
         }
         return item.approved !== false;
       });
-      setResources(approvedOnly);
+      setAllResources(approvedOnly);
     } catch (err) {
       showError("Failed to fetch resources.");
     } finally {
@@ -64,7 +65,37 @@ const Resources = () => {
   useEffect(() => {
     fetchResources();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, exchangeType]);
+  }, []);
+
+  // Live filter resources whenever allResources, category, exchangeType, or search changes
+  useEffect(() => {
+    let filtered = [...allResources];
+
+    if (category) {
+      filtered = filtered.filter(item =>
+        (item.category || '').toLowerCase() === category.toLowerCase()
+      );
+    }
+
+    if (exchangeType) {
+      filtered = filtered.filter(item =>
+        (item.exchangeType || '').toLowerCase() === exchangeType.toLowerCase()
+      );
+    }
+
+    if (search && search.trim() !== '') {
+      const query = search.trim().toLowerCase();
+      filtered = filtered.filter(item => {
+        const title = (item.title || '').toLowerCase();
+        const desc = (item.description || '').toLowerCase();
+        const cat = (item.category || '').toLowerCase();
+        const owner = `${item.user?.firstName || ''} ${item.user?.lastName || ''}`.toLowerCase();
+        return title.includes(query) || desc.includes(query) || cat.includes(query) || owner.includes(query);
+      });
+    }
+
+    setResources(filtered);
+  }, [allResources, category, exchangeType, search]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -188,10 +219,24 @@ const Resources = () => {
               <option value="exchange">Exchange</option>
             </select>
           </div>
-          <div className="col-md-1">
-            <button type="submit" className="btn btn-primary w-100 fw-bold">
+          <div className="col-md-1 d-flex gap-1">
+            <button type="submit" className="btn btn-primary w-100 fw-bold" title="Search">
               <i className="bi bi-search"></i>
             </button>
+            {(search || category || exchangeType) && (
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                title="Reset Filters"
+                onClick={() => {
+                  setSearch('');
+                  setCategory('');
+                  setExchangeType('');
+                }}
+              >
+                <i className="bi bi-x-lg"></i>
+              </button>
+            )}
           </div>
         </form>
       </div>
