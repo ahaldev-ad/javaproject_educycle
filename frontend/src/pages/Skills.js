@@ -205,16 +205,21 @@ const Skills = () => {
           </div>
 
           <div className="filter-selects-group">
-            <select
-              className={`form-select filter-select-minimal ${level ? 'active' : ''}`}
-              value={level}
-              onChange={(e) => setLevel(e.target.value)}
-            >
-              <option value="">All Expertise Levels</option>
-              <option value="Beginner">🌱 Beginner</option>
-              <option value="Intermediate">⚡ Intermediate</option>
-              <option value="Advanced">🏆 Advanced</option>
-            </select>
+            <div className="filter-select-box">
+              <i className="bi bi-mortarboard select-icon"></i>
+              <select
+                className={`filter-select-minimal ${level ? 'active' : ''}`}
+                value={level}
+                onChange={(e) => setLevel(e.target.value)}
+                aria-label="Filter by expertise level"
+              >
+                <option value="">Level: All</option>
+                <option value="Beginner">Level: Beginner</option>
+                <option value="Intermediate">Level: Intermediate</option>
+                <option value="Advanced">Level: Advanced</option>
+              </select>
+              <i className="bi bi-chevron-down select-arrow"></i>
+            </div>
           </div>
         </div>
 

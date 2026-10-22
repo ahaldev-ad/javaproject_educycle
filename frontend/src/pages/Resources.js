@@ -207,16 +207,21 @@ const Resources = () => {
           </div>
 
           <div className="filter-selects-group">
-            <select
-              className={`form-select filter-select-minimal ${exchangeType ? 'active' : ''}`}
-              value={exchangeType}
-              onChange={(e) => setExchangeType(e.target.value)}
-            >
-              <option value="">All Exchange Types</option>
-              <option value="donate">🎁 Donate</option>
-              <option value="lend">⏳ Lend</option>
-              <option value="exchange">🔄 Exchange</option>
-            </select>
+            <div className="filter-select-box">
+              <i className="bi bi-arrow-left-right select-icon"></i>
+              <select
+                className={`filter-select-minimal ${exchangeType ? 'active' : ''}`}
+                value={exchangeType}
+                onChange={(e) => setExchangeType(e.target.value)}
+                aria-label="Filter by exchange type"
+              >
+                <option value="">Exchange: All</option>
+                <option value="donate">Type: Donate</option>
+                <option value="lend">Type: Lend</option>
+                <option value="exchange">Type: Exchange</option>
+              </select>
+              <i className="bi bi-chevron-down select-arrow"></i>
+            </div>
           </div>
         </div>
 
