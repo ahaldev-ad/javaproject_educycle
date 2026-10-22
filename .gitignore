@@ -7,6 +7,7 @@
 **/build/
 .env
 
-# System files
+# System and IDE files
 .DS_Store
 Thumbs.db
+.vscode/

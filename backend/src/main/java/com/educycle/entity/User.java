@@ -57,6 +57,15 @@ public class User {
 
     private Double rating = 0.0;
 
+    @Column(name = "suspended")
+    private Boolean suspended = false;
+
+    @Column(name = "suspended_until")
+    private LocalDateTime suspendedUntil;
+
+    @Column(name = "suspension_reason")
+    private String suspensionReason;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -211,6 +220,40 @@ public class User {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Boolean getSuspended() {
+        return suspended != null && suspended;
+    }
+
+    public void setSuspended(Boolean suspended) {
+        this.suspended = suspended;
+    }
+
+    public LocalDateTime getSuspendedUntil() {
+        return suspendedUntil;
+    }
+
+    public void setSuspendedUntil(LocalDateTime suspendedUntil) {
+        this.suspendedUntil = suspendedUntil;
+    }
+
+    public String getSuspensionReason() {
+        return suspensionReason;
+    }
+
+    public void setSuspensionReason(String suspensionReason) {
+        this.suspensionReason = suspensionReason;
+    }
+
+    public boolean isCurrentlySuspended() {
+        if (Boolean.TRUE.equals(suspended)) {
+            if (suspendedUntil == null) {
+                return true;
+            }
+            return LocalDateTime.now().isBefore(suspendedUntil);
+        }
+        return false;
     }
 
     @Override

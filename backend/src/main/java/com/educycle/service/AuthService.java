@@ -52,6 +52,17 @@ public class AuthService {
         User user = userRepository.findByEmail(authRequest.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + authRequest.getEmail()));
 
+        if (user.isCurrentlySuspended()) {
+            String msg = "Your account has been temporarily suspended by an administrator";
+            if (user.getSuspendedUntil() != null) {
+                msg += " until " + user.getSuspendedUntil().toString().replace('T', ' ');
+            }
+            if (user.getSuspensionReason() != null && !user.getSuspensionReason().trim().isEmpty()) {
+                msg += ". Reason: " + user.getSuspensionReason();
+            }
+            throw new com.educycle.exception.AccountSuspendedException(msg, user.getSuspendedUntil(), user.getSuspensionReason());
+        }
+
         if (!passwordEncoder.matches(authRequest.getPassword(), user.getPasswordHash())) {
             throw new RuntimeException("Invalid credentials!");
         }

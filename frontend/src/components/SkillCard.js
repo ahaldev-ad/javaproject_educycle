@@ -55,10 +55,15 @@ const SkillCard = ({ skill, onRequest }) => {
             <span 
               className={`badge px-2.5 py-1.5 fw-bold ${
                 skill.approvalStatus === 'REJECTED' 
-                  ? 'bg-danger bg-opacity-15 text-danger border border-danger border-opacity-25' 
-                  : 'bg-warning bg-opacity-20 text-warning-emphasis border border-warning border-opacity-50'
+                  ? 'badge-status-rejected' 
+                  : 'badge-status-pending'
               }`}
-              style={{ fontSize: '0.72rem' }}
+              style={{
+                fontSize: '0.72rem',
+                backgroundColor: skill.approvalStatus === 'REJECTED' ? '#fee2e2' : '#fef3c7',
+                color: skill.approvalStatus === 'REJECTED' ? '#b91c1c' : '#92400e',
+                border: `1px solid ${skill.approvalStatus === 'REJECTED' ? '#fca5a5' : '#fcd34d'}`
+              }}
             >
               <i className={`bi ${skill.approvalStatus === 'REJECTED' ? 'bi-x-circle-fill' : 'bi-hourglass-split'} me-1`}></i>
               {skill.approvalStatus === 'REJECTED' ? 'Rejected by Admin' : 'Pending Admin Approval'}

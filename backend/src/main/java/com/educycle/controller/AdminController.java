@@ -48,6 +48,34 @@ public class AdminController {
         return ResponseEntity.ok(userRepository.findAll());
     }
 
+    @PostMapping("/users/{id}/suspend")
+    public ResponseEntity<User> suspendUser(
+            @PathVariable Long id,
+            @RequestBody(required = false) com.educycle.dto.SuspendUserRequest request) {
+        return userRepository.findById(id).map(user -> {
+            user.setSuspended(true);
+            if (request != null && request.getDays() != null && request.getDays() > 0) {
+                user.setSuspendedUntil(java.time.LocalDateTime.now().plusDays(request.getDays()));
+            } else {
+                user.setSuspendedUntil(null);
+            }
+            if (request != null && request.getReason() != null) {
+                user.setSuspensionReason(request.getReason());
+            }
+            return ResponseEntity.ok(userRepository.save(user));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/users/{id}/unsuspend")
+    public ResponseEntity<User> unsuspendUser(@PathVariable Long id) {
+        return userRepository.findById(id).map(user -> {
+            user.setSuspended(false);
+            user.setSuspendedUntil(null);
+            user.setSuspensionReason(null);
+            return ResponseEntity.ok(userRepository.save(user));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userRepository.findById(id).ifPresent(user -> {

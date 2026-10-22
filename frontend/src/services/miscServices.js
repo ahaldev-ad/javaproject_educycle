@@ -106,7 +106,17 @@ export const adminService = {
     return response.data;
   },
 
-  suspendUser: async (userId) => {
+  suspendUser: async (userId, data = {}) => {
+    const response = await API.post(`/admin/users/${userId}/suspend`, data);
+    return response.data;
+  },
+
+  unsuspendUser: async (userId) => {
+    const response = await API.post(`/admin/users/${userId}/unsuspend`);
+    return response.data;
+  },
+
+  deleteUser: async (userId) => {
     const response = await API.delete(`/admin/users/${userId}`);
     return response.data;
   },

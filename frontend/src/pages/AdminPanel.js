@@ -34,6 +34,13 @@ const AdminPanel = () => {
   const [skillFilter, setSkillFilter] = useState('ALL');       // ALL, PENDING, APPROVED, REJECTED
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Temporary Suspension Modal State
+  const [suspendModalOpen, setSuspendModalOpen] = useState(false);
+  const [selectedUserForSuspend, setSelectedUserForSuspend] = useState(null);
+  const [suspendDurationDays, setSuspendDurationDays] = useState(7);
+  const [suspendReason, setSuspendReason] = useState('Violation of academic community guidelines');
+  const [suspending, setSuspending] = useState(false);
+
   const isAdminLoggedIn = isAuthenticated && user?.role === 'ADMIN';
 
   const fetchAdminData = useCallback(async () => {
@@ -167,15 +174,59 @@ const AdminPanel = () => {
     }
   };
 
-  // User Actions
-  const handleSuspendUser = async (userId) => {
-    if (!window.confirm("Are you sure you want to delete/suspend this user?")) return;
+  // User Actions (Suspension & Management)
+  const openSuspendModal = (targetUser) => {
+    setSelectedUserForSuspend(targetUser);
+    setSuspendDurationDays(7);
+    setSuspendReason('Violation of academic community guidelines');
+    setSuspendModalOpen(true);
+  };
+
+  const closeSuspendModal = () => {
+    setSuspendModalOpen(false);
+    setSelectedUserForSuspend(null);
+    setSuspending(false);
+  };
+
+  const handleConfirmSuspend = async () => {
+    if (!selectedUserForSuspend) return;
+    const userId = selectedUserForSuspend.userId || selectedUserForSuspend.id;
+    setSuspending(true);
     try {
-      await adminService.suspendUser(userId);
-      showSuccess("User account suspended.");
+      const days = parseInt(suspendDurationDays, 10);
+      await adminService.suspendUser(userId, {
+        days: days > 0 ? days : null,
+        reason: suspendReason.trim()
+      });
+      showSuccess(`User ${selectedUserForSuspend.firstName || ''} suspended ${days > 0 ? `for ${days} day(s)` : 'indefinitely'}.`);
+      closeSuspendModal();
       fetchAdminData();
     } catch (err) {
-      showError("Failed to suspend user.");
+      showError(err.response?.data?.message || "Failed to suspend user.");
+    } finally {
+      setSuspending(false);
+    }
+  };
+
+  const handleUnsuspendUser = async (userId, userName) => {
+    if (!window.confirm(`Reactivate user account for ${userName || `#${userId}`}?`)) return;
+    try {
+      await adminService.unsuspendUser(userId);
+      showSuccess(`User ${userName || ''} suspension lifted. Account is now active.`);
+      fetchAdminData();
+    } catch (err) {
+      showError("Failed to reactivate user.");
+    }
+  };
+
+  const handleDeleteUser = async (userId, userName) => {
+    if (!window.confirm(`WARNING: Are you sure you want to PERMANENTLY delete user ${userName || `#${userId}`}? This cannot be undone.`)) return;
+    try {
+      await adminService.deleteUser(userId);
+      showSuccess("User permanently deleted.");
+      fetchAdminData();
+    } catch (err) {
+      showError("Failed to delete user.");
     }
   };
 
@@ -184,21 +235,30 @@ const AdminPanel = () => {
     const status = item.approvalStatus || (item.approved ? 'APPROVED' : 'PENDING');
     if (status === 'APPROVED' || item.approved === true) {
       return (
-        <span className="badge bg-success bg-opacity-15 text-success border border-success border-opacity-25 px-2.5 py-1.5 fw-bold">
-          <i className="bi bi-check-circle-fill me-1"></i>Approved
+        <span
+          className="badge badge-status-approved px-2.5 py-1.5 fw-bold d-inline-flex align-items-center"
+          style={{ backgroundColor: '#dcfce7', color: '#15803d', border: '1px solid #86efac' }}
+        >
+          <i className="bi bi-check-circle-fill me-1" style={{ color: '#15803d' }}></i>Approved
         </span>
       );
     }
     if (status === 'REJECTED') {
       return (
-        <span className="badge bg-danger bg-opacity-15 text-danger border border-danger border-opacity-25 px-2.5 py-1.5 fw-bold">
-          <i className="bi bi-x-circle-fill me-1"></i>Rejected
+        <span
+          className="badge badge-status-rejected px-2.5 py-1.5 fw-bold d-inline-flex align-items-center"
+          style={{ backgroundColor: '#fee2e2', color: '#b91c1c', border: '1px solid #fca5a5' }}
+        >
+          <i className="bi bi-x-circle-fill me-1" style={{ color: '#b91c1c' }}></i>Rejected
         </span>
       );
     }
     return (
-      <span className="badge bg-warning bg-opacity-20 text-warning-emphasis border border-warning border-opacity-50 px-2.5 py-1.5 fw-bold">
-        <i className="bi bi-hourglass-split me-1"></i>Pending Approval
+      <span
+        className="badge badge-status-pending px-2.5 py-1.5 fw-bold d-inline-flex align-items-center"
+        style={{ backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d' }}
+      >
+        <i className="bi bi-hourglass-split me-1" style={{ color: '#92400e' }}></i>Pending Approval
       </span>
     );
   };
@@ -507,11 +567,17 @@ const AdminPanel = () => {
                     <h2 className="fw-extrabold text-dark mb-1">{resources.length}</h2>
                     <span className="text-muted fw-semibold small d-block mb-2">Total Resources Posted</span>
                     <div className="d-flex justify-content-center gap-2">
-                      <span className="badge bg-warning bg-opacity-20 text-warning-emphasis">
-                        {pendingResCount} Pending
+                      <span
+                        className="badge badge-status-pending px-2.5 py-1.5 fw-bold"
+                        style={{ backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d' }}
+                      >
+                        <i className="bi bi-hourglass-split me-1"></i>{pendingResCount} Pending
                       </span>
-                      <span className="badge bg-success bg-opacity-15 text-success">
-                        {resources.filter(r => r.approved).length} Approved
+                      <span
+                        className="badge badge-status-approved px-2.5 py-1.5 fw-bold"
+                        style={{ backgroundColor: '#dcfce7', color: '#15803d', border: '1px solid #86efac' }}
+                      >
+                        <i className="bi bi-check-circle-fill me-1"></i>{resources.filter(r => r.approved).length} Approved
                       </span>
                     </div>
                   </div>
@@ -528,11 +594,17 @@ const AdminPanel = () => {
                     <h2 className="fw-extrabold text-dark mb-1">{skills.length}</h2>
                     <span className="text-muted fw-semibold small d-block mb-2">Total Peer Skills Offered</span>
                     <div className="d-flex justify-content-center gap-2">
-                      <span className="badge bg-warning bg-opacity-20 text-warning-emphasis">
-                        {pendingSkillCount} Pending
+                      <span
+                        className="badge badge-status-pending px-2.5 py-1.5 fw-bold"
+                        style={{ backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d' }}
+                      >
+                        <i className="bi bi-hourglass-split me-1"></i>{pendingSkillCount} Pending
                       </span>
-                      <span className="badge bg-success bg-opacity-15 text-success">
-                        {skills.filter(s => s.approved).length} Approved
+                      <span
+                        className="badge badge-status-approved px-2.5 py-1.5 fw-bold"
+                        style={{ backgroundColor: '#dcfce7', color: '#15803d', border: '1px solid #86efac' }}
+                      >
+                        <i className="bi bi-check-circle-fill me-1"></i>{skills.filter(s => s.approved).length} Approved
                       </span>
                     </div>
                   </div>
@@ -862,7 +934,8 @@ const AdminPanel = () => {
                       <th>Email</th>
                       <th>College / Department</th>
                       <th>Role</th>
-                      <th className="text-end pe-3">Action</th>
+                      <th>Status</th>
+                      <th className="text-end pe-3">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -880,27 +953,192 @@ const AdminPanel = () => {
                                 {u.role || 'USER'}
                               </span>
                             </td>
+                            <td>
+                              {u.suspended ? (
+                                <div>
+                                  <span
+                                    className="badge badge-status-rejected px-2.5 py-1.5 fw-bold d-inline-flex align-items-center"
+                                    style={{ backgroundColor: '#fee2e2', color: '#b91c1c', border: '1px solid #fca5a5' }}
+                                  >
+                                    <i className="bi bi-slash-circle me-1"></i>Suspended
+                                  </span>
+                                  {u.suspendedUntil && (
+                                    <small className="d-block text-muted mt-1" style={{ fontSize: '0.72rem' }}>
+                                      Until {new Date(u.suspendedUntil).toLocaleDateString()} {new Date(u.suspendedUntil).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </small>
+                                  )}
+                                  {u.suspensionReason && (
+                                    <small className="d-block text-secondary fst-italic mt-0.5" style={{ fontSize: '0.7rem' }}>
+                                      "{u.suspensionReason}"
+                                    </small>
+                                  )}
+                                </div>
+                              ) : (
+                                <span
+                                  className="badge badge-status-approved px-2.5 py-1.5 fw-bold d-inline-flex align-items-center"
+                                  style={{ backgroundColor: '#dcfce7', color: '#15803d', border: '1px solid #86efac' }}
+                                >
+                                  <i className="bi bi-check-circle-fill me-1"></i>Active
+                                </span>
+                              )}
+                            </td>
                             <td className="text-end pe-3">
                               {u.role !== 'ADMIN' && (
-                                <button
-                                  className="btn btn-sm btn-outline-danger px-3 fw-bold"
-                                  onClick={() => handleSuspendUser(uId)}
-                                >
-                                  <i className="bi bi-person-x me-1"></i>Delete User
-                                </button>
+                                <div className="btn-group btn-group-sm" role="group">
+                                  {u.suspended ? (
+                                    <button
+                                      className="btn btn-success fw-bold px-2.5 py-1.5"
+                                      onClick={() => handleUnsuspendUser(uId, `${u.firstName || ''} ${u.lastName || ''}`.trim())}
+                                      title="Lift suspension and reactivate user"
+                                    >
+                                      <i className="bi bi-play-circle me-1"></i>Reactivate
+                                    </button>
+                                  ) : (
+                                    <button
+                                      className="btn btn-outline-warning text-dark fw-bold px-2.5 py-1.5"
+                                      onClick={() => openSuspendModal(u)}
+                                      title="Temporarily suspend user account"
+                                    >
+                                      <i className="bi bi-pause-circle me-1"></i>Suspend
+                                    </button>
+                                  )}
+                                  <button
+                                    className="btn btn-outline-danger fw-bold px-2.5 py-1.5"
+                                    onClick={() => handleDeleteUser(uId, `${u.firstName || ''} ${u.lastName || ''}`.trim())}
+                                    title="Permanently delete user account"
+                                  >
+                                    <i className="bi bi-trash"></i>
+                                  </button>
+                                </div>
                               )}
                             </td>
                           </tr>
                         );
                       })
                     ) : (
-                      <tr><td colSpan="6" className="text-center text-muted py-4">No users found.</td></tr>
+                      <tr><td colSpan="7" className="text-center text-muted py-4">No users found.</td></tr>
                     )}
                   </tbody>
                 </table>
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Temporary Suspension Modal */}
+      {suspendModalOpen && selectedUserForSuspend && (
+        <div 
+          className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+          style={{
+            backgroundColor: 'rgba(15, 23, 42, 0.65)',
+            backdropFilter: 'blur(6px)',
+            zIndex: 1050
+          }}
+        >
+          <div className="card shadow-lg border-0 p-0 overflow-hidden" style={{ width: '92%', maxWidth: '520px', borderRadius: '16px' }}>
+            <div className="p-4 text-white" style={{ background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)' }}>
+              <div className="d-flex justify-content-between align-items-center">
+                <div className="d-flex align-items-center gap-2">
+                  <i className="bi bi-pause-circle-fill fs-3"></i>
+                  <div>
+                    <h5 className="fw-bold mb-0 text-white">Temporarily Suspend User</h5>
+                    <small className="opacity-80">Restrict account access without deleting profile or data</small>
+                  </div>
+                </div>
+                <button 
+                  type="button" 
+                  className="btn-close btn-close-white" 
+                  onClick={closeSuspendModal}
+                  aria-label="Close"
+                ></button>
+              </div>
+            </div>
+
+            <div className="card-body p-4 bg-white">
+              {/* User Card Mini */}
+              <div className="d-flex align-items-center gap-3 p-3 rounded-3 mb-3 bg-light border">
+                <div 
+                  className="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white shadow-sm"
+                  style={{ width: '42px', height: '42px', background: 'var(--primary-gradient)' }}
+                >
+                  {(selectedUserForSuspend.firstName || 'U')[0]}
+                </div>
+                <div>
+                  <div className="fw-bold text-dark">{selectedUserForSuspend.firstName} {selectedUserForSuspend.lastName}</div>
+                  <small className="text-muted">{selectedUserForSuspend.email}</small>
+                </div>
+              </div>
+
+              {/* Duration Select */}
+              <div className="mb-3">
+                <label className="form-label fw-bold text-dark small mb-1">
+                  <i className="bi bi-clock-history me-1 text-warning"></i>Suspension Duration
+                </label>
+                <select 
+                  className="form-select"
+                  value={suspendDurationDays}
+                  onChange={(e) => setSuspendDurationDays(e.target.value)}
+                >
+                  <option value="1">1 Day (24 Hours)</option>
+                  <option value="3">3 Days</option>
+                  <option value="7">7 Days (1 Week)</option>
+                  <option value="14">14 Days (2 Weeks)</option>
+                  <option value="30">30 Days (1 Month)</option>
+                  <option value="0">Indefinite (Until manually reactivated)</option>
+                </select>
+                <small className="text-muted" style={{ fontSize: '0.78rem' }}>
+                  User will be blocked from logging in during this period.
+                </small>
+              </div>
+
+              {/* Reason Input */}
+              <div className="mb-3">
+                <label className="form-label fw-bold text-dark small mb-1">
+                  <i className="bi bi-chat-left-dots me-1 text-primary"></i>Reason for Suspension
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="e.g. Unreturned borrowed item, community guidelines..."
+                  value={suspendReason}
+                  onChange={(e) => setSuspendReason(e.target.value)}
+                />
+                <small className="text-muted" style={{ fontSize: '0.78rem' }}>
+                  This reason will be displayed to the user if they try to sign in.
+                </small>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="d-flex justify-content-end gap-2 mt-4 pt-2 border-top">
+                <button 
+                  type="button" 
+                  className="btn btn-outline-secondary px-3 fw-semibold"
+                  onClick={closeSuspendModal}
+                  disabled={suspending}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-warning text-dark fw-bold px-4 shadow-sm"
+                  onClick={handleConfirmSuspend}
+                  disabled={suspending}
+                >
+                  {suspending ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                      Suspending...
+                    </>
+                  ) : (
+                    <>
+                      <i className="bi bi-pause-circle me-1"></i>Confirm Suspension
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </AnimatedPage>
