@@ -1,6 +1,15 @@
 import React, { useRef } from 'react';
 import { gsap } from 'gsap';
 
+export const formatTeachingMethod = (method) => {
+  if (!method) return 'One-on-One Tutoring';
+  const str = String(method).toUpperCase().replace(/-/g, '_').trim();
+  if (str === 'ONE_ON_ONE' || str.includes('ONE') || str === '1_ON_1') return 'One-on-One Tutoring';
+  if (str === 'GROUP' || str.includes('GROUP')) return 'Group Study Session';
+  if (str === 'ASYNC' || str.includes('ASYNC')) return 'Async Support / Q&A';
+  return method;
+};
+
 const SkillCard = ({ skill, onRequest }) => {
   const cardRef = useRef(null);
 
@@ -29,6 +38,9 @@ const SkillCard = ({ skill, onRequest }) => {
       });
     }
   };
+
+  const sessionMode = formatTeachingMethod(skill.teachingMethod);
+  const availability = skill.availability && skill.availability.trim() ? skill.availability : 'Flexible Schedule';
 
   return (
     <div
@@ -101,13 +113,13 @@ const SkillCard = ({ skill, onRequest }) => {
           className="p-3 rounded-4 mb-4 small" 
           style={{ background: 'var(--primary-light)', border: '1px solid rgba(5, 79, 163, 0.1)', minHeight: '4.2rem' }}
         >
-          <div className="d-flex align-items-center gap-2 mb-1 text-primary fw-semibold text-truncate">
+          <div className="d-flex align-items-center gap-2 mb-1 text-primary fw-semibold text-truncate" title={sessionMode}>
             <i className="bi bi-display fs-6 flex-shrink-0"></i>
-            <span className="text-truncate">Mode: {skill.teachingMethod || 'One-on-One'}</span>
+            <span className="text-truncate">Mode: {sessionMode}</span>
           </div>
-          <div className="d-flex align-items-center gap-2 text-secondary text-truncate">
+          <div className="d-flex align-items-center gap-2 text-secondary text-truncate" title={availability}>
             <i className="bi bi-clock fs-6 flex-shrink-0"></i>
-            <span className="text-truncate">Availability: {skill.availability || 'Flexible'}</span>
+            <span className="text-truncate">Availability: {availability}</span>
           </div>
         </div>
 

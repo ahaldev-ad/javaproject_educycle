@@ -13,7 +13,7 @@ const getBaseURL = () => {
   // ensure we do NOT try to call localhost:8080
   if (!isLocalhost) {
     if (!envUrl || envUrl.includes('localhost') || envUrl.includes('127.0.0.1')) {
-      return 'https://moonjiya-proju.onrender.com/api';
+      return 'https://javaproject-educycle.onrender.com/api';
     }
   }
   return envUrl || 'http://localhost:8080/api';

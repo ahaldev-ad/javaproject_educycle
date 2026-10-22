@@ -33,8 +33,8 @@ const Skills = () => {
     skillName: '',
     category: 'Programming',
     level: 'Intermediate',
-    teachingMethod: 'One-on-One',
-    availability: '3-5 hours/week',
+    teachingMethod: 'ONE_ON_ONE',
+    availability: '',
     description: ''
   });
 
@@ -118,8 +118,8 @@ const Skills = () => {
         skillName: '',
         category: 'Programming',
         level: 'Intermediate',
-        teachingMethod: 'One-on-One',
-        availability: '3-5 hours/week',
+        teachingMethod: 'ONE_ON_ONE',
+        availability: '',
         description: ''
       });
       fetchSkills();
@@ -269,15 +269,15 @@ const Skills = () => {
                     </div>
 
                     <div className="col-md-4">
-                      <label className="form-label fw-semibold text-dark">Teaching Format</label>
+                      <label className="form-label fw-semibold text-dark">Session Mode</label>
                       <select
                         className="form-select"
                         value={newSkill.teachingMethod}
                         onChange={(e) => setNewSkill({ ...newSkill, teachingMethod: e.target.value })}
                       >
-                        <option value="One-on-One">One-on-One Tutoring</option>
-                        <option value="Group Study">Group Study Session</option>
-                        <option value="Async Support">Async Code Review / Q&A</option>
+                        <option value="ONE_ON_ONE">One-on-One Tutoring</option>
+                        <option value="GROUP">Group Study Session</option>
+                        <option value="ASYNC">Async Code Review / Q&A</option>
                       </select>
                     </div>
 
@@ -286,10 +286,18 @@ const Skills = () => {
                       <input
                         type="text"
                         className="form-control"
+                        list="availability-presets"
                         placeholder="e.g. Weekends, 2-4 hrs"
                         value={newSkill.availability}
                         onChange={(e) => setNewSkill({ ...newSkill, availability: e.target.value })}
                       />
+                      <datalist id="availability-presets">
+                        <option value="Weekends (2-4 hrs)" />
+                        <option value="Weekday Evenings (3-5 hrs)" />
+                        <option value="1-2 hours/week" />
+                        <option value="3-5 hours/week" />
+                        <option value="Flexible Schedule" />
+                      </datalist>
                     </div>
 
                     <div className="col-12">

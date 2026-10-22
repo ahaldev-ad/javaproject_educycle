@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import AnimatedPage from '../components/AnimatedPage';
 import { useAuth } from '../context/AuthContext';
 import { adminService } from '../services/miscServices';
+import { formatTeachingMethod } from '../components/SkillCard';
 import { useNotification } from '../context/NotificationContext';
 
 const AdminPanel = () => {
@@ -782,7 +783,7 @@ const AdminPanel = () => {
                                   {skl.description}
                                 </small>
                                 <div className="small text-secondary mt-1">
-                                  <i className="bi bi-display me-1"></i>{skl.teachingMethod || 'One-on-One'} • <i className="bi bi-clock me-1"></i>{skl.availability || 'Flexible'}
+                                  <i className="bi bi-display me-1"></i>{formatTeachingMethod(skl.teachingMethod)} • <i className="bi bi-clock me-1"></i>{skl.availability || 'Flexible Schedule'}
                                 </div>
                               </td>
                               <td>

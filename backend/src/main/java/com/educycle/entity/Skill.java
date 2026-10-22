@@ -123,7 +123,7 @@ public class Skill {
     }
 
     public TeachingMethod getTeachingMethod() {
-        return teachingMethod;
+        return teachingMethod != null ? teachingMethod : TeachingMethod.ONE_ON_ONE;
     }
 
     public void setTeachingMethod(TeachingMethod teachingMethod) {
@@ -131,7 +131,7 @@ public class Skill {
     }
 
     public String getAvailability() {
-        return availability;
+        return availability != null && !availability.trim().isEmpty() ? availability : "Flexible Schedule";
     }
 
     public void setAvailability(String availability) {

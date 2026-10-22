@@ -42,21 +42,28 @@ public class SkillService {
         s.setSkillName(dto.getSkillName());
         s.setCategory(dto.getCategory());
         s.setDescription(dto.getDescription());
-        s.setAvailability(dto.getAvailability());
+        
+        // Availability: preserve exact string or fallback to Flexible
+        if (dto.getAvailability() != null && !dto.getAvailability().trim().isEmpty()) {
+            s.setAvailability(dto.getAvailability().trim());
+        } else {
+            s.setAvailability("Flexible Schedule");
+        }
+
         s.setApproved(false);
         s.setApprovalStatus("PENDING");
 
-        if (dto.getLevel() != null) {
+        if (dto.getLevel() != null && !dto.getLevel().trim().isEmpty()) {
             try {
-                s.setLevel(SkillLevel.valueOf(dto.getLevel().toUpperCase()));
-            } catch (IllegalArgumentException ignored) {}
+                s.setLevel(SkillLevel.valueOf(dto.getLevel().trim().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                s.setLevel(SkillLevel.INTERMEDIATE);
+            }
+        } else {
+            s.setLevel(SkillLevel.INTERMEDIATE);
         }
 
-        if (dto.getTeachingMethod() != null) {
-            try {
-                s.setTeachingMethod(TeachingMethod.valueOf(dto.getTeachingMethod().toUpperCase()));
-            } catch (IllegalArgumentException ignored) {}
-        }
+        s.setTeachingMethod(parseTeachingMethod(dto.getTeachingMethod()));
 
         if (dto.getUserId() != null) {
             User u = userRepository.findById(dto.getUserId()).orElse(null);
@@ -86,5 +93,26 @@ public class SkillService {
 
     public void deleteSkill(Long id) {
         skillRepository.deleteById(id);
+    }
+
+    private TeachingMethod parseTeachingMethod(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            return TeachingMethod.ONE_ON_ONE;
+        }
+        String clean = input.trim().toUpperCase().replace("-", "_").replace(" ", "_");
+        if (clean.contains("ONE") || clean.contains("1")) {
+            return TeachingMethod.ONE_ON_ONE;
+        }
+        if (clean.contains("GROUP")) {
+            return TeachingMethod.GROUP;
+        }
+        if (clean.contains("ASYNC") || clean.contains("REVIEW") || clean.contains("SUPPORT")) {
+            return TeachingMethod.ASYNC;
+        }
+        try {
+            return TeachingMethod.valueOf(clean);
+        } catch (IllegalArgumentException e) {
+            return TeachingMethod.ONE_ON_ONE;
+        }
     }
 }
