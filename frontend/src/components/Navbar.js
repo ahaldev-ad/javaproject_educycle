@@ -35,10 +35,7 @@ const Navbar = () => {
     <nav ref={navRef} className="navbar navbar-expand-lg glass-nav sticky-top py-3">
       <div className="container">
         <Link className="navbar-brand d-flex align-items-center gap-2.5 fw-bold fs-4 text-primary" to="/">
-          <div 
-            className="d-flex align-items-center justify-content-center text-white rounded-circle shadow-sm"
-            style={{ width: '38px', height: '38px', background: 'var(--primary-gradient)' }}
-          >
+          <div className="d-flex align-items-center justify-content-center text-white nav-brand-icon">
             <i className="bi bi-recycle fs-5"></i>
           </div>
           <span style={{ letterSpacing: '-0.02em', color: 'var(--primary-color)' }}>EduCycle</span>
@@ -90,17 +87,16 @@ const Navbar = () => {
             {isAuthenticated ? (
               <div className="dropdown">
                 <button
-                  className="btn btn-light dropdown-toggle d-flex align-items-center gap-2 px-3 py-2 border-0 shadow-sm"
+                  className="btn nav-user-pill dropdown-toggle d-flex align-items-center gap-2 px-3 py-2 border-0"
                   type="button"
                   id="userDropdown"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
-                  style={{ background: 'var(--primary-light)', color: 'var(--primary-color)', borderRadius: '50px' }}
                 >
                   <i className="bi bi-person-circle fs-5"></i>
                   <span className="fw-bold">{user ? user.firstName || user.name || user.email : 'User'}</span>
                 </button>
-                <ul className="dropdown-menu dropdown-menu-end border-0 shadow-lg p-2" style={{ borderRadius: '16px' }} aria-labelledby="userDropdown">
+                <ul className="dropdown-menu dropdown-menu-end border-0" aria-labelledby="userDropdown">
                   <li>
                     <Link className="dropdown-item rounded-3 py-2 fw-medium" to="/profile">
                       <i className="bi bi-person text-primary me-2"></i>My Profile

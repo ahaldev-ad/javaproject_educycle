@@ -71,95 +71,65 @@ const Login = () => {
         <div className="col-md-6 col-lg-5">
           <div ref={cardRef} className="glass-card overflow-hidden border-0 shadow-lg p-0">
             {suspensionDetails ? (
-              <div>
-                {/* Suspension Banner Header */}
+              <div className="card-body p-4 p-md-5 text-center">
                 <div 
-                  className="text-white text-center p-4 p-md-5" 
-                  style={{ background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)' }}
+                  className="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+                  style={{ width: '56px', height: '56px', backgroundColor: '#fef2f2', color: '#dc2626' }}
                 >
-                  <div 
-                    className="d-inline-flex align-items-center justify-content-center text-white rounded-circle shadow mb-3"
-                    style={{ width: '64px', height: '64px', background: 'rgba(255, 255, 255, 0.2)', backdropFilter: 'blur(10px)' }}
-                  >
-                    <i className="bi bi-shield-slash-fill fs-1 text-white"></i>
+                  <i className="bi bi-slash-circle fs-3"></i>
+                </div>
+                
+                <h4 className="fw-bold text-dark mb-1">Account Suspended</h4>
+                <p className="text-muted small mb-4">{suspensionDetails.email}</p>
+
+                <div className="text-start p-3 rounded-3 mb-4" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                  <div className="mb-2.5">
+                    <span className="text-muted small d-block mb-1" style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.04em' }}>
+                      REASON
+                    </span>
+                    <span className="fw-semibold text-dark small d-block">
+                      "{suspensionDetails.reason}"
+                    </span>
                   </div>
-                  <h3 className="fw-extrabold mb-1" style={{ letterSpacing: '-0.02em' }}>Account Suspended</h3>
-                  <p className="small mb-0 opacity-90">Temporary restriction on account access</p>
+
+                  <div className="pt-2 border-top">
+                    <span className="text-muted small d-block mb-1" style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.04em' }}>
+                      RESTRICTED UNTIL
+                    </span>
+                    <span className="fw-semibold text-dark small">
+                      {suspensionDetails.suspendedUntil ? (
+                        new Date(suspensionDetails.suspendedUntil).toLocaleDateString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })
+                      ) : (
+                        'Indefinite (Awaiting admin review)'
+                      )}
+                    </span>
+                  </div>
                 </div>
 
-                {/* Suspension Details Body */}
-                <div className="card-body p-4 p-md-5">
-                  <div className="alert alert-danger border-0 d-flex align-items-start gap-3 p-3 rounded-3 mb-4" style={{ backgroundColor: '#fef2f2' }}>
-                    <i className="bi bi-exclamation-triangle-fill fs-4 text-danger flex-shrink-0 mt-0.5"></i>
-                    <div>
-                      <h6 className="fw-bold text-danger mb-1">Access Blocked by Campus Admin</h6>
-                      <p className="small text-danger-emphasis mb-0">
-                        The account for <strong>{suspensionDetails.email}</strong> is temporarily restricted.
-                      </p>
-                    </div>
-                  </div>
+                <button 
+                  type="button" 
+                  className="btn btn-primary w-100 py-2.5 fw-bold shadow-sm"
+                  onClick={() => {
+                    setSuspensionDetails(null);
+                    setFormData({ email: '', password: '' });
+                  }}
+                >
+                  Back to Sign In
+                </button>
 
-                  {/* Suspension Reason Box */}
-                  <div className="p-3 rounded-3 mb-3 border" style={{ backgroundColor: '#fffbeb', borderColor: '#fde68a' }}>
-                    <label className="text-uppercase fw-bold text-muted small d-block mb-1" style={{ fontSize: '0.72rem', letterSpacing: '0.05em' }}>
-                      <i className="bi bi-chat-left-dots-fill me-1 text-warning"></i>Reason Stated by Admin
-                    </label>
-                    <div className="fw-semibold text-dark">
-                      "{suspensionDetails.reason}"
-                    </div>
-                  </div>
-
-                  {/* Duration / Lift Date */}
-                  <div className="p-3 rounded-3 mb-4 border" style={{ backgroundColor: '#f8fafc', borderColor: '#e2e8f0' }}>
-                    <label className="text-uppercase fw-bold text-muted small d-block mb-1" style={{ fontSize: '0.72rem', letterSpacing: '0.05em' }}>
-                      <i className="bi bi-clock-history me-1 text-primary"></i>Suspension Duration
-                    </label>
-                    <div className="fw-bold text-dark">
-                      {suspensionDetails.suspendedUntil ? (
-                        <>
-                          Restricted until:{' '}
-                          <span className="text-primary d-block mt-0.5">
-                            {new Date(suspensionDetails.suspendedUntil).toLocaleDateString(undefined, { 
-                              weekday: 'short', 
-                              year: 'numeric', 
-                              month: 'short', 
-                              day: 'numeric' 
-                            })}{' '}
-                            at{' '}
-                            {new Date(suspensionDetails.suspendedUntil).toLocaleTimeString([], { 
-                              hour: '2-digit', 
-                              minute: '2-digit' 
-                            })}
-                          </span>
-                        </>
-                      ) : (
-                        <span className="text-secondary">Indefinite (Pending manual reactivation by Admin)</span>
-                      )}
-                    </div>
-                  </div>
-
-                  <p className="small text-muted mb-4 text-center">
-                    If you believe this is an error or have resolved this issue, please contact your college administrator.
-                  </p>
-
-                  <div className="d-flex flex-column gap-2">
-                    <button 
-                      type="button" 
-                      className="btn btn-outline-secondary w-100 py-2.5 fw-semibold"
-                      onClick={() => {
-                        setSuspensionDetails(null);
-                        setFormData({ email: '', password: '' });
-                      }}
-                    >
-                      <i className="bi bi-arrow-left me-1"></i>Sign In with Another Account
-                    </button>
-                    <a 
-                      href="mailto:admin@educycle.college.edu" 
-                      className="btn btn-primary w-100 py-2.5 fw-bold"
-                    >
-                      <i className="bi bi-envelope me-1"></i>Contact Admin Support
-                    </a>
-                  </div>
+                <div className="mt-3 text-center">
+                  <a 
+                    href="mailto:admin@educycle.college.edu" 
+                    className="text-muted small text-decoration-none"
+                  >
+                    Need help? <span className="text-primary fw-semibold">Contact Admin Support</span>
+                  </a>
                 </div>
               </div>
             ) : (

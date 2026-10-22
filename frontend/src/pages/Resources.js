@@ -134,11 +134,6 @@ const Resources = () => {
     }
   }, [loading, resources]);
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    fetchResources();
-  };
-
   const handlePostSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -188,57 +183,83 @@ const Resources = () => {
         )}
       </div>
 
-      {/* Filter & Search Bar */}
-      <div ref={filterRef} className="glass-card p-4 mb-5">
-        <form onSubmit={handleSearchSubmit} className="row g-3 align-items-center">
-          <div className="col-md-5">
-            <div className="input-group">
-              <span className="input-group-text"><i className="bi bi-search"></i></span>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Search by title, subject, or keywords..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="col-md-3">
-            <select className="form-select" value={category} onChange={(e) => setCategory(e.target.value)}>
-              <option value="">All Categories</option>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-          </div>
-          <div className="col-md-3">
-            <select className="form-select" value={exchangeType} onChange={(e) => setExchangeType(e.target.value)}>
-              <option value="">All Exchange Types</option>
-              <option value="donate">Donate</option>
-              <option value="lend">Lend</option>
-              <option value="exchange">Exchange</option>
-            </select>
-          </div>
-          <div className="col-md-1 d-flex gap-1">
-            <button type="submit" className="btn btn-primary w-100 fw-bold" title="Search">
-              <i className="bi bi-search"></i>
-            </button>
-            {(search || category || exchangeType) && (
+      {/* Optimized & Minimal Filter Toolbar */}
+      <div ref={filterRef} className="minimal-filter-bar mb-4">
+        <div className="filter-main-row">
+          <div className="filter-search-box">
+            <i className="bi bi-search search-icon"></i>
+            <input
+              type="text"
+              placeholder="Search by title, subject, or keyword..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            {search && (
               <button
                 type="button"
-                className="btn btn-outline-secondary"
-                title="Reset Filters"
-                onClick={() => {
-                  setSearch('');
-                  setCategory('');
-                  setExchangeType('');
-                }}
+                className="clear-btn"
+                title="Clear search"
+                onClick={() => setSearch('')}
               >
-                <i className="bi bi-x-lg"></i>
+                <i className="bi bi-x-circle-fill"></i>
               </button>
             )}
           </div>
-        </form>
+
+          <div className="filter-selects-group">
+            <select
+              className={`form-select filter-select-minimal ${exchangeType ? 'active' : ''}`}
+              value={exchangeType}
+              onChange={(e) => setExchangeType(e.target.value)}
+            >
+              <option value="">All Exchange Types</option>
+              <option value="donate">🎁 Donate</option>
+              <option value="lend">⏳ Lend</option>
+              <option value="exchange">🔄 Exchange</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Quick Category Chips */}
+        <div className="category-chips-bar">
+          <button
+            type="button"
+            className={`category-chip-btn ${category === '' ? 'active' : ''}`}
+            onClick={() => setCategory('')}
+          >
+            All Items
+          </button>
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              className={`category-chip-btn ${category === cat ? 'active' : ''}`}
+              onClick={() => setCategory(category === cat ? '' : cat)}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* Meta Bar: Results count & clear action */}
+        <div className="filter-meta-bar">
+          <span>
+            Showing <strong className="text-dark">{resources.length}</strong> of {allResources.length} resources
+          </span>
+          {(search || category || exchangeType) && (
+            <button
+              type="button"
+              className="filter-reset-link"
+              onClick={() => {
+                setSearch('');
+                setCategory('');
+                setExchangeType('');
+              }}
+            >
+              <i className="bi bi-arrow-counterclockwise"></i> Reset Filters
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Resource Grid */}
