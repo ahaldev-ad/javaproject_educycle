@@ -239,7 +239,15 @@ const Home = () => {
   };
 
   return (
-    <AnimatedPage className="home-page pb-5">
+    <AnimatedPage
+      className="home-page pb-5"
+      style={{
+        backgroundImage: `url(${process.env.PUBLIC_URL || ''}/bg.png)`,
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'top center',
+        backgroundSize: 'cover',
+      }}
+    >
       {/* Flowing Minimal Hero Section */}
       <section ref={heroSectionRef} className="py-5 mb-5 position-relative overflow-hidden">
         <div className="container py-lg-4">

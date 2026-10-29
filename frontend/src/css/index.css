@@ -1023,3 +1023,12 @@ html {
   }
 }
 
+/* Home Page Background Image */
+.home-page {
+  position: relative;
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: cover;
+  min-height: calc(100vh - 72px);
+}
+
